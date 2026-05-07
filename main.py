@@ -18,20 +18,13 @@ if not TOKEN:
 
 print(f"Bot token found: {TOKEN[:20]}...")
 
-# REPLACE WITH YOUR TELEGRAM USERNAME (without @)
-ALLOWED_USER = "kyriosky"
-
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Only responds to allowed user"""
+    """Responds to MLBB???? message"""
     
     try:
-        sender_username = update.message.from_user.username
-        
-        if sender_username != ALLOWED_USER:
-            return
-        
         user_message = update.message.text
         
+        # Check if message contains "MLBB????"
         if "MLBB????" in user_message:
             tagged_message = (
                 "MLBB GAME TIME! 🎮\n\n"
@@ -39,7 +32,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 "Let's go! 💪"
             )
             await update.message.reply_text(tagged_message)
-            print(f"Replied to {sender_username}")
+            print(f"Bot replied to: {user_message}")
     except Exception as e:
         print(f"Error in handle_message: {e}")
 
@@ -49,7 +42,7 @@ def main():
         application = Application.builder().token(TOKEN).build()
         application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
         
-        print("🤖 Bot is running... (Only responds to @kyriosky)")
+        print("🤖 Bot is running... (Responds to anyone)")
         application.run_polling()
     except Exception as e:
         print(f"ERROR: {e}")
