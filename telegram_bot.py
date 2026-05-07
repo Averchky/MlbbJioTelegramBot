@@ -2,8 +2,8 @@ from telegram import Update
 from telegram.ext import Application, MessageHandler, filters, ContextTypes
 import os
 
-# Get token from environment variable (safer than hardcoding)
-TOKEN = os.getenv("TOKEN", "YOUR_BOT_TOKEN_HERE")
+# Get token from environment variable
+TOKEN = os.getenv("TOKEN")
 
 # REPLACE WITH YOUR TELEGRAM USERNAME (without @)
 ALLOWED_USER = "kyriosky"  # Change this to YOUR username
