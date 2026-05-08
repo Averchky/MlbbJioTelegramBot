@@ -30,7 +30,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             return
         
         # Only respond to MLBB????
-        if "MLBB????" in user_message:
+        if "2167?" in user_message:
             # Send message to the group (don't reply, just send)
             await update.message.chat.send_message(
                 "@kyriosky @jasonieeee @l_n_w5 @jianrongggg @roderlol @ongysys\n\n"
