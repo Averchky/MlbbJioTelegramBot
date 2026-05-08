@@ -17,49 +17,46 @@ if not TOKEN:
 
 print(f"Bot token found: {TOKEN[:20]}...")
 
+IGNORE_USER = "kyriosky"
+
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle incoming messages"""
     try:
+        sender_username = update.message.from_user.username or ""
         user_message = update.message.text
-        sender = update.message.from_user.first_name
         
-        # Check if message contains "MLBB????"
+        # ONLY respond if it's from kyriosky, IGNORE everyone else
+        if sender_username != IGNORE_USER:
+            return
+        
+        # Only respond to MLBB????
         if "MLBB????" in user_message:
-            tagged_message = (
-                "MLBB GAME TIME! 🎮\n\n"
+            # Send message to the group (don't reply, just send)
+            await update.message.chat.send_message(
                 "@kyriosky @jasonieeee @l_n_w5 @jianrongggg @roderlol @ongysys\n\n"
-                "Let's go! 💪"
+                "VISA TIME"
             )
-            await update.message.reply_text(tagged_message)
-            print(f"✅ Bot replied to {sender}")
+            print(f"✅ Bot sent message to group")
     except Exception as e:
         print(f"Error: {e}")
 
 async def post_init(application: Application) -> None:
     """Clean up old sessions on startup"""
     try:
-        # Force delete all webhooks and pending updates
         await application.bot.delete_webhook(drop_pending_updates=True)
         print("✅ Cleared old sessions and webhooks")
-        await asyncio.sleep(1)  # Give Telegram time to process
+        await asyncio.sleep(1)
     except Exception as e:
         print(f"Error clearing sessions: {e}")
 
 def main():
     """Start the bot"""
     try:
-        # Create application with minimal config
         application = Application.builder().token(TOKEN).build()
-        
-        # Add message handler
         application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-        
-        # Set post-init to clean up
         application.post_init = post_init
         
         print("🤖 Bot is starting...")
-        
-        # Use polling with aggressive cleanup
         application.run_polling(
             allowed_updates=Update.ALL_TYPES,
             drop_pending_updates=True,
