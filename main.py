@@ -17,7 +17,8 @@ if not TOKEN:
 
 print(f"Bot token found: {TOKEN[:20]}...")
 
-IGNORE_USER = "kyriosky"
+# ONLY this user can trigger the bot
+ALLOWED_USER = "kyriosky"
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle incoming messages"""
@@ -25,18 +26,18 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         sender_username = update.message.from_user.username or ""
         user_message = update.message.text
         
-        # ONLY respond if it's from kyriosky, IGNORE everyone else
-        if sender_username != IGNORE_USER:
-            return
+        # ONLY respond if sender is kyriosky
+        if sender_username != ALLOWED_USER:
+            return  # Ignore everyone else
         
         # Only respond to MLBB????
-        if "2167?" in user_message:
-            # Send message to the group (don't reply, just send)
+        if "2167??" in user_message:
+            # Send message to the group
             await update.message.chat.send_message(
                 "@kyriosky @jasonieeee @l_n_w5 @jianrongggg @roderlol @ongysys\n\n"
                 "VISA TIME"
             )
-            print(f"✅ Bot sent message to group")
+            print(f"✅ Bot sent message triggered by {sender_username}")
     except Exception as e:
         print(f"Error: {e}")
 
@@ -56,7 +57,7 @@ def main():
         application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
         application.post_init = post_init
         
-        print("🤖 Bot is starting...")
+        print("🤖 Bot is starting... (Only @kyriosky can trigger)")
         application.run_polling(
             allowed_updates=Update.ALL_TYPES,
             drop_pending_updates=True,
