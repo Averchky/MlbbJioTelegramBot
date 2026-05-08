@@ -3,13 +3,11 @@ from telegram.ext import Application, MessageHandler, filters, ContextTypes
 import os
 import logging
 
-# Enable logging to see errors
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
 )
 
-# Get token from environment variable
 TOKEN = os.getenv("TOKEN")
 
 if not TOKEN:
@@ -19,10 +17,10 @@ if not TOKEN:
 print(f"Bot token found: {TOKEN[:20]}...")
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Responds to MLBB???? message"""
-    
+    """Handle incoming messages"""
     try:
         user_message = update.message.text
+        sender = update.message.from_user.first_name
         
         # Check if message contains "MLBB????"
         if "MLBB????" in user_message:
@@ -32,18 +30,28 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 "Let's go! 💪"
             )
             await update.message.reply_text(tagged_message)
-            print(f"Bot replied to: {user_message}")
+            print(f"✅ Bot replied to {sender}")
     except Exception as e:
-        print(f"Error in handle_message: {e}")
+        print(f"Error: {e}")
+
+async def post_init(application: Application) -> None:
+    """Delete webhook on startup (use polling instead)"""
+    await application.bot.delete_webhook(drop_pending_updates=True)
+    print("Webhook deleted, using polling mode")
 
 def main():
-    """Start the bot"""
+    """Start the bot with polling"""
     try:
         application = Application.builder().token(TOKEN).build()
+        
+        # Set up handlers
         application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
         
-        print("🤖 Bot is running... (Responds to anyone)")
-        application.run_polling()
+        # Clean up on startup
+        application.post_init = post_init
+        
+        print("🤖 Bot is running... (Polling mode)")
+        application.run_polling(allowed_updates=Update.ALL_TYPES, drop_pending_updates=True)
     except Exception as e:
         print(f"ERROR: {e}")
         import traceback
