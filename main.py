@@ -2,6 +2,7 @@ from telegram import Update
 from telegram.ext import Application, MessageHandler, filters, ContextTypes
 import os
 import logging
+import asyncio
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -35,23 +36,38 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         print(f"Error: {e}")
 
 async def post_init(application: Application) -> None:
-    """Delete webhook on startup (use polling instead)"""
-    await application.bot.delete_webhook(drop_pending_updates=True)
-    print("Webhook deleted, using polling mode")
+    """Clean up old sessions on startup"""
+    try:
+        # Force delete all webhooks and pending updates
+        await application.bot.delete_webhook(drop_pending_updates=True)
+        print("✅ Cleared old sessions and webhooks")
+        await asyncio.sleep(1)  # Give Telegram time to process
+    except Exception as e:
+        print(f"Error clearing sessions: {e}")
 
 def main():
-    """Start the bot with polling"""
+    """Start the bot"""
     try:
+        # Create application with minimal config
         application = Application.builder().token(TOKEN).build()
         
-        # Set up handlers
+        # Add message handler
         application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
         
-        # Clean up on startup
+        # Set post-init to clean up
         application.post_init = post_init
         
-        print("🤖 Bot is running... (Polling mode)")
-        application.run_polling(allowed_updates=Update.ALL_TYPES, drop_pending_updates=True)
+        print("🤖 Bot is starting...")
+        
+        # Use polling with aggressive cleanup
+        application.run_polling(
+            allowed_updates=Update.ALL_TYPES,
+            drop_pending_updates=True,
+            timeout=30,
+            read_timeout=30,
+            write_timeout=30,
+            connect_timeout=30
+        )
     except Exception as e:
         print(f"ERROR: {e}")
         import traceback
