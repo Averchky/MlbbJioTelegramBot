@@ -18,7 +18,7 @@ if not TOKEN:
 print(f"Bot token found: {TOKEN[:20]}...")
 
 # ONLY this user can trigger the bot
-ALLOWED_USER = "kyriosky"
+#ALLOWED_USER = "kyriosky"
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle incoming messages"""
@@ -27,8 +27,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_message = update.message.text
         
         # ONLY respond if sender is kyriosky
-        if sender_username != ALLOWED_USER:
-            return  # Ignore everyone else
+        #if sender_username != ALLOWED_USER:
+            #return  # Ignore everyone else
         
         # Only respond to MLBB????
         if "2167??" in user_message:
