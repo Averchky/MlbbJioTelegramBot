@@ -31,11 +31,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             #return  # Ignore everyone else
         
         # Only respond to MLBB????
-        if "2167??" in user_message:
+        if "MLBB SUCKS" in user_message:
             # Send message to the group
             await update.message.chat.send_message(
                 "@kyriosky @jasonieeee @l_n_w5 @jianrongggg @roderlol @ongysys\n\n"
-                "VISA TIME"
+                "FUCK THIS LJ GAME"
             )
             print(f"✅ Bot sent message triggered by {sender_username}")
     except Exception as e:
