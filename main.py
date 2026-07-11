@@ -19,14 +19,14 @@ print(f"Bot token found: {TOKEN[:20]}...")
 # Trigger phrases that activate the per-user reply
 TRIGGER_PHRASES = ["GU YES", "MLBB SUCKS"]
 
-MENTIONS = "@kyriosky @jasonieeee @l_n_w5 @jianrongggg @roderlol @ongysys\n\n"
+MENTIONS = "@kyriosky @jasonieeee @l_n_w5 @jianrongggg @Quan1921 @ongysys\n\n"
 
 USER_REPLIES = {
     "kyriosky": "Come mlbb with my No1 Silvanna 🤮",
     "jasonieeee": "MY GLOO WIN RATE IS JOVER",
     "l_n_w5": "Next game i play tank ok",
     "jianrongggg": "NEED VISA IS IT",
-    "roderlol": "WHERE IS MY TEAM, WHY SO MANY PPL HERE WHY",
+    "Quan1921": "WHERE IS MY TEAM, WHY SO MANY PPL HERE WHY",
     "ongysys": "Yall dont rotate ownself settle the fat mm later",
 }
 
@@ -38,9 +38,14 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_message = update.message.text or ""
 
         # Easter egg: "10 + 9" -> "21"
-        if user_message.strip() == "10 + 9":
-            await update.message.chat.send_message("21")
+        if user_message.strip() == "whats 10 + 9":
+            await update.message.chat.send_message("2️⃣ 1️⃣")
             print(f"✅ Bot sent '21' triggered by {sender_username}")
+            return
+            
+         if user_message.strip() == "WHATS GU":
+            await update.message.chat.send_message("ra's al GU YES")
+            print(f"✅ Bot sent 'GU' triggered by {sender_username}")
             return
 
         # Per-user trigger replies
