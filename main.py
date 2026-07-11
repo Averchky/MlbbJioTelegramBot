@@ -1,4 +1,3 @@
-cat > ~/MlbbJioTelegramBot/main.py << 'EOF'
 from telegram import Update
 from telegram.ext import Application, MessageHandler, filters, ContextTypes
 import os
