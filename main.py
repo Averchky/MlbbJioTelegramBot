@@ -10,36 +10,51 @@ logging.basicConfig(
 )
 
 TOKEN = os.getenv("TOKEN")
-
 if not TOKEN:
     print("ERROR: TOKEN environment variable not set!")
     exit(1)
 
 print(f"Bot token found: {TOKEN[:20]}...")
 
-# ONLY this user can trigger the bot
-#ALLOWED_USER = "kyriosky"
+# Trigger phrases that activate the per-user reply
+TRIGGER_PHRASES = ["GU YES", "MLBB SUCKS"]
+
+MENTIONS = "@kyriosky @jasonieeee @l_n_w5 @jianrongggg @roderlol @ongysys\n\n"
+
+USER_REPLIES = {
+    "kyriosky": "Come mlbb with my No1 Silvanna 🤮",
+    "jasonieeee": "MY GLOO WIN RATE IS JOVER",
+    "l_n_w5": "Next game i play tank ok",
+    "jianrongggg": "NEED VISA IS IT",
+    "roderlol": "WHERE IS MY TEAM, WHY SO MANY PPL HERE WHY",
+    "ongysys": "Yall dont rotate ownself settle the fat mm later",
+}
+
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle incoming messages"""
     try:
         sender_username = update.message.from_user.username or ""
-        user_message = update.message.text
-        
-        # ONLY respond if sender is kyriosky
-        #if sender_username != ALLOWED_USER:
-            #return  # Ignore everyone else
-        
-        # Only respond to MLBB????
-        if "MLBB SUCKS" in user_message:
-            # Send message to the group
-            await update.message.chat.send_message(
-                "@kyriosky @jasonieeee @l_n_w5 @jianrongggg @roderlol @ongysys\n\n"
-                "FUCK THIS LJ GAME"
-            )
-            print(f"✅ Bot sent message triggered by {sender_username}")
+        user_message = update.message.text or ""
+
+        # Easter egg: "10 + 9" -> "21"
+        if user_message.strip() == "10 + 9":
+            await update.message.chat.send_message("21")
+            print(f"✅ Bot sent '21' triggered by {sender_username}")
+            return
+
+        # Per-user trigger replies
+        if any(phrase in user_message for phrase in TRIGGER_PHRASES):
+            reply_line = USER_REPLIES.get(sender_username)
+            if reply_line:
+                await update.message.chat.send_message(MENTIONS + reply_line)
+                print(f"✅ Bot sent message triggered by {sender_username}")
+            else:
+                print(f"⚠️ Trigger matched but no reply configured for {sender_username}")
+
     except Exception as e:
         print(f"Error: {e}")
+
 
 async def post_init(application: Application) -> None:
     """Clean up old sessions on startup"""
@@ -50,14 +65,15 @@ async def post_init(application: Application) -> None:
     except Exception as e:
         print(f"Error clearing sessions: {e}")
 
+
 def main():
     """Start the bot"""
     try:
         application = Application.builder().token(TOKEN).build()
         application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
         application.post_init = post_init
-        
-        print("🤖 Bot is starting... (Only @kyriosky can trigger)")
+
+        print("🤖 Bot is starting...")
         application.run_polling(
             allowed_updates=Update.ALL_TYPES,
             drop_pending_updates=True,
@@ -70,6 +86,7 @@ def main():
         print(f"ERROR: {e}")
         import traceback
         traceback.print_exc()
+
 
 if __name__ == '__main__':
     main()
